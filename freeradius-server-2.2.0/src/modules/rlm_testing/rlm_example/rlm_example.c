@@ -1,5 +1,5 @@
 /*
- * rlm_testing.c
+ * rlm_example.c
  *
  * Version:	$Id$
  *
@@ -34,12 +34,12 @@ RCSID("$Id$")
  *	a lot cleaner to do so, and a pointer to the structure can
  *	be used as the instance handle.
  */
-typedef struct rlm_testing_t {
+typedef struct rlm_example_t {
 	int		boolean;
 	int		value;
 	char		*string;
 	uint32_t	ipaddr;
-} rlm_testing_t;
+} rlm_example_t;
 
 /*
  *	A mapping of configuration file names to internal variables.
@@ -51,10 +51,10 @@ typedef struct rlm_testing_t {
  *	buffer over-flows.
  */
 static const CONF_PARSER module_config[] = {
-  { "integer", PW_TYPE_INTEGER,    offsetof(rlm_testing_t,value), NULL,   "1" },
-  { "boolean", PW_TYPE_BOOLEAN,    offsetof(rlm_testing_t,boolean), NULL, "no"},
-  { "string",  PW_TYPE_STRING_PTR, offsetof(rlm_testing_t,string), NULL,  NULL},
-  { "ipaddr",  PW_TYPE_IPADDR,     offsetof(rlm_testing_t,ipaddr), NULL,  "*" },
+  { "integer", PW_TYPE_INTEGER,    offsetof(rlm_example_t,value), NULL,   "1" },
+  { "boolean", PW_TYPE_BOOLEAN,    offsetof(rlm_example_t,boolean), NULL, "no"},
+  { "string",  PW_TYPE_STRING_PTR, offsetof(rlm_example_t,string), NULL,  NULL},
+  { "ipaddr",  PW_TYPE_IPADDR,     offsetof(rlm_example_t,ipaddr), NULL,  "*" },
 
   { NULL, -1, 0, NULL, NULL }		/* end the list */
 };
@@ -70,9 +70,9 @@ static const CONF_PARSER module_config[] = {
  *	that must be referenced in later calls, store a handle to it
  *	in *instance otherwise put a null pointer there.
  */
-static int testing_instantiate(CONF_SECTION *conf, void **instance)
+static int example_instantiate(CONF_SECTION *conf, void **instance)
 {
-	rlm_testing_t *data;
+	rlm_example_t *data;
 
 	/*
 	 *	Set up a storage area for instance data
@@ -103,11 +103,10 @@ static int testing_instantiate(CONF_SECTION *conf, void **instance)
  *	from the database. The authentication code only needs to check
  *	the password, the rest is done here.
  */
-static int testing_authorize(void *instance, REQUEST *request)
+static int example_authorize(void *instance, REQUEST *request)
 {
 	VALUE_PAIR *state;
 	VALUE_PAIR *reply;
-	VALUE_PAIR *reply2;
 
 	/* quiet the compiler */
 	instance = instance;
@@ -126,9 +125,7 @@ static int testing_authorize(void *instance, REQUEST *request)
 	 *  Create the challenge, and add it to the reply.
 	 */
        	reply = pairmake("Reply-Message", "This is a challenge", T_OP_EQ);
-	reply2 = pairmake("Reply-Message", "This is a second challenge", T_OP_EQ);
 	pairadd(&request->reply->vps, reply);
-	pairadd(&request->reply->vps, reply2);
 	state = pairmake("State", "0", T_OP_EQ);
 	pairadd(&request->reply->vps, state);
 
@@ -146,7 +143,7 @@ static int testing_authorize(void *instance, REQUEST *request)
 /*
  *	Authenticate the user with the given password.
  */
-static int testing_authenticate(void *instance, REQUEST *request)
+static int example_authenticate(void *instance, REQUEST *request)
 {
 	/* quiet the compiler */
 	instance = instance;
@@ -158,7 +155,7 @@ static int testing_authenticate(void *instance, REQUEST *request)
 /*
  *	Massage the request before recording it or proxying it
  */
-static int testing_preacct(void *instance, REQUEST *request)
+static int example_preacct(void *instance, REQUEST *request)
 {
 	/* quiet the compiler */
 	instance = instance;
@@ -170,7 +167,7 @@ static int testing_preacct(void *instance, REQUEST *request)
 /*
  *	Write accounting information to this modules database.
  */
-static int testing_accounting(void *instance, REQUEST *request)
+static int example_accounting(void *instance, REQUEST *request)
 {
 	/* quiet the compiler */
 	instance = instance;
@@ -189,7 +186,7 @@ static int testing_accounting(void *instance, REQUEST *request)
  *	max. number of logins, do a second pass and validate all
  *	logins by querying the terminal server (using eg. SNMP).
  */
-static int testing_checksimul(void *instance, REQUEST *request)
+static int example_checksimul(void *instance, REQUEST *request)
 {
   instance = instance;
 
@@ -203,7 +200,7 @@ static int testing_checksimul(void *instance, REQUEST *request)
  *	Only free memory we allocated.  The strings allocated via
  *	cf_section_parse() do not need to be freed.
  */
-static int testing_detach(void *instance)
+static int example_detach(void *instance)
 {
 	free(instance);
 	return 0;
@@ -218,18 +215,18 @@ static int testing_detach(void *instance)
  *	The server will then take care of ensuring that the module
  *	is single-threaded.
  */
-module_t rlm_testing = {
+module_t rlm_example = {
 	RLM_MODULE_INIT,
-	"testing",
+	"example",
 	RLM_TYPE_THREAD_SAFE,		/* type */
-	testing_instantiate,		/* instantiation */
-	testing_detach,			/* detach */
+	example_instantiate,		/* instantiation */
+	example_detach,			/* detach */
 	{
-		testing_authenticate,	/* authentication */
-		testing_authorize,	/* authorization */
-		testing_preacct,	/* preaccounting */
-		testing_accounting,	/* accounting */
-		testing_checksimul,	/* checksimul */
+		example_authenticate,	/* authentication */
+		example_authorize,	/* authorization */
+		example_preacct,	/* preaccounting */
+		example_accounting,	/* accounting */
+		example_checksimul,	/* checksimul */
 		NULL,			/* pre-proxy */
 		NULL,			/* post-proxy */
 		NULL			/* post-auth */
