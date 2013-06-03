@@ -1,0 +1,12 @@
+x509_mod.c: In function ‘read__public_certificate’:
+x509_mod.c:32: warning: assignment makes pointer from integer without a cast
+x509_mod.c:34: error: wrong type argument to unary exclamation mark
+x509_mod.c: At top level:
+x509_mod.c:43: error: conflicting types for ‘read_private_certificate’
+x509_mod.c:18: note: previous implicit declaration of ‘read_private_certificate’ was here
+x509_mod.c: In function ‘read_private_certificate’:
+x509_mod.c:55: error: expected ‘;’ before ‘password_size’
+x509_mod.c:59: error: ‘null’ undeclared (first use in this function)
+x509_mod.c:59: error: (Each undeclared identifier is reported only once
+x509_mod.c:59: error: for each function it appears in.)
+x509_mod.c:61: error: wrong type argument to unary exclamation mark
