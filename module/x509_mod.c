@@ -9,16 +9,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <openssl/bio.h>
-#include <openssl/x509.h>
+#include <openssl/pem.h>
 
-int main()
-{
-	read_public_certificate();
-	read_private_certificate();
-}
 
-X509 *read__public_certificate()
+X509 *read_public_certificate()
 {
     BIO *tbio = NULL;
     X509 *certificate;
@@ -31,12 +25,13 @@ X509 *read__public_certificate()
     
     certificate = PEM_read_bio_X509(tbio, NULL, 0, NULL);
 	
-    if(!*certificate)
+    
+    if(!certificate)
     {
         return NULL;
     }
     
-	printf("test");
+	
     return certificate;
 }
 
@@ -52,17 +47,25 @@ X509 *read_private_certificate()
     //data = (rlm_testing_t *)instance;
     //cert = data->priv_key;
     password = "whatever";
-    size password_size = strlen(password);
+    int password_size = strlen(password);
     
     tbio = BIO_new_file(cert, "r");
     
-    certificate = PEM_read_bio_X509(tbio, NULL, null, password);
+    certificate = PEM_read_bio_X509(tbio, NULL, NULL, password);
 	
-    if(!*certificate)
+    if(!certificate)
     {
         return NULL;
     }
     
-	printf("test");
+	
     return certificate;
 }
+
+
+int main()
+{
+	read_public_certificate();
+	read_private_certificate();
+}
+
